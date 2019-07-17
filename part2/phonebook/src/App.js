@@ -1,4 +1,7 @@
 import React, { useState } from 'react'
+import Persons from './components/Persons'
+import Search from './components/Search'
+import AddPersonForm from './components/AddPersonForm'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -9,6 +12,14 @@ const App = () => {
   ])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [searchItem, setSearchItem] = useState('')
+
+  const [showAll, setShowAll] = useState(true)
+
+  const filteredPersons = showAll
+  ? persons
+  : persons.filter(name => name.name.toLowerCase().includes(searchItem.toLowerCase()))
+
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -20,7 +31,6 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
-
     const personObject = {
       name: newName,
       number: newNumber
@@ -29,7 +39,6 @@ const App = () => {
       setPersons(persons.concat(personObject))
       setNewName('')
       setNewNumber('')
-      console.log(persons)
     }
     else {
       var message = `${newName} is already in the list`;
@@ -37,30 +46,33 @@ const App = () => {
     }
   }
 
+  const handleSearch = (event) => {
+    setSearchItem(event.target.value)
+  }
+
+  const applyFilter = (event) => {
+    event.preventDefault()
+  }
+
+
   return (
     <div>
-      <h2>Phonebook</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name:
-          <input
-            value={newName}
-            onChange={handleNameChange}
-          />
-        </div>
-        <div>
-          number:
-          <input
-            value={newNumber}
-            onChange={handleNumberChange}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {persons.map(person => <li key={person.name}>{person.name}: {person.number}</li>)}
+      <Search 
+        applyFilter={applyFilter} 
+        handleSearch={handleSearch} 
+        showAll={showAll} 
+        setShowAll={setShowAll}
+      />
+      
+      <AddPersonForm
+        handleNameChange={handleNameChange}
+        handleNumberChange={handleNumberChange}
+        addPerson={addPerson}
+      />
+
+      <Persons 
+        filteredPersons={filteredPersons}
+      />
     </div>
   )
 }
