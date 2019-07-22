@@ -25,21 +25,15 @@ const App = () => {
   }, [])
 
   const deleteButton = id => {
-    console.log(id)
-    // const note = notes.find(n => n.id === id)
-    // const changedNote = { ...note, important: !note.important }
 
-    // noteService
-    //   .update(id, changedNote)
-    //     .then(returnedNote => {
-    //     setNotes(notes.map(note => note.id !== id ? note : returnedNote))
-    //   })
-    //   .catch(error => {
-    //     alert(
-    //       `the note '${note.content}' was already deleted from server`
-    //     )
-    //     setNotes(notes.filter(n => n.id !== id))
-    //   })
+    const message = `Do you want to delete ${persons.find(p => p.id === id).name}?`
+    const result = window.confirm(message)
+
+    if (result === true) {
+      personsService
+      .deletePerson(id)
+      .then(setPersons(persons.filter(p => p.id !== id)))
+    }
   }
 
   const handleNameChange = (event) => {
