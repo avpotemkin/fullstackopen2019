@@ -3,12 +3,14 @@ import Person from './components/Person'
 import Search from './components/Search'
 import AddPersonForm from './components/AddPersonForm'
 import personsService from './services/persons'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchItem, setSearchItem] = useState('')
+  const [notification, setNotification] = useState(null)
 
   const [showAll, setShowAll] = useState(true)
 
@@ -26,13 +28,37 @@ const App = () => {
 
   const deleteButton = id => {
 
-    const message = `Do you want to delete ${persons.find(p => p.id === id).name}?`
+    const nameToBeDeleted = persons.find(p => p.id === id).name
+    const message = `Do you want to delete ${nameToBeDeleted}?`
     const result = window.confirm(message)
 
     if (result === true) {
       personsService
-      .deletePerson(id)
-      .then(setPersons(persons.filter(p => p.id !== id)))
+        .deletePerson(id)
+        .then(setPersons(persons.filter(p => p.id !== id)))
+        .catch(error => {
+          setNotification(
+            {
+              text: `${nameToBeDeleted} was already deleted from the server`,
+              type: 'error'
+            },
+          )
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
+          setPersons(persons.filter(p => p.id !== id))
+        })
+
+        setNotification(
+          {
+            text: `A record for ${nameToBeDeleted} was deleted`,
+            type: 'notification'
+          }
+        )
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000
+        )
     }
   }
 
@@ -59,26 +85,61 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
+
+      setNotification(
+        {
+          text: `${newName} is added`,
+          type: 'notification'
+        }
+      )
+
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000
+      )
+
     }
     else if (persons.find(p => p.name === newName).number !== newNumber) {
       var message = `${newName} is already in the list, do you want to update the number?`
       var result = window.confirm(message)
       if (result === true) {
         const person = persons.find(p => p.name === newName)
-        const updatedPerson = { ...person, number: newNumber}
+        const updatedPerson = { ...person, number: newNumber }
         const id = persons.find(p => p.name === newName).id
         personsService
           .updateNumber(id, updatedPerson)
           .then(ret => {
             setPersons(persons.map(person => person.id !== id ? person : ret))
-      })
+          })
+          .catch(error => {
+            setNotification(
+              {
+                text: `${newName} was already deleted from the server`,
+                type: 'error'
+              },
+            )
+            setTimeout(() => {
+              setNotification(null)
+            }, 5000)
+            setPersons(persons.filter(p => p.id !== id))
+          })
 
-    }
-  } else {
+        setNotification(
+          {
+            text: `A number for ${newName} is updated to ${newNumber}`,
+            type: 'notification'
+          }
+        )
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000
+        )
+      }
+    } else {
       message = `${newName} is already in the list`;
       window.alert(message);
+    }
   }
-}
 
   const handleSearch = (event) => {
     setSearchItem(event.target.value)
@@ -99,6 +160,9 @@ const App = () => {
 
   return (
     <div>
+
+      <Notification notification={notification} />
+
       <Search
         applyFilter={applyFilter}
         handleSearch={handleSearch}
