@@ -60,11 +60,25 @@ const App = () => {
           setNewNumber('')
         })
     }
-    else {
-      var message = `${newName} is already in the list`;
-      window.alert(message);
+    else if (persons.find(p => p.name === newName).number !== newNumber) {
+      var message = `${newName} is already in the list, do you want to update the number?`
+      var result = window.confirm(message)
+      if (result === true) {
+        const person = persons.find(p => p.name === newName)
+        const updatedPerson = { ...person, number: newNumber}
+        const id = persons.find(p => p.name === newName).id
+        personsService
+          .updateNumber(id, updatedPerson)
+          .then(ret => {
+            setPersons(persons.map(person => person.id !== id ? person : ret))
+      })
+
     }
+  } else {
+      message = `${newName} is already in the list`;
+      window.alert(message);
   }
+}
 
   const handleSearch = (event) => {
     setSearchItem(event.target.value)
