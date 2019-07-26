@@ -85,19 +85,32 @@ const App = () => {
           setNewName('')
           setNewNumber('')
         })
-
-      setNotification(
-        {
-          text: `${newName} is added`,
-          type: 'notification'
-        }
-      )
-
-      setTimeout(() => {
-        setNotification(null)
-      }, 5000
-      )
-
+        .then(() => {
+          setNotification(
+            {
+              text: `${newName} is added`,
+              type: 'notification'
+            }
+          )
+    
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000
+          )
+        })
+        .catch(error => {
+          console.log(error.response.data)
+          setNotification(
+            {
+              text: `${error.response.data.error}`,
+              type: 'error'
+            }
+          )
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000
+          )
+        })
     }
     else if (persons.find(p => p.name === newName).number !== newNumber) {
       var message = `${newName} is already in the list, do you want to update the number?`
