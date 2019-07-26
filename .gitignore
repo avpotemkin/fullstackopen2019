@@ -2,3 +2,6 @@
 *test*
 part3
 .vscode
+.env
+.eslintignore
+.eslintrc.js
