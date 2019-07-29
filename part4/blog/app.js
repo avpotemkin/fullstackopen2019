@@ -3,7 +3,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
 const cors = require('cors')
-const notesRouter = require('./controllers/blog')
+const blogRouter = require('./controllers/blog')
 const middleware = require('./utils/middleware')
 const mongoose = require('mongoose')
 
@@ -19,11 +19,10 @@ mongoose
   })
 
 app.use(cors())
-app.use(express.static('build'))
 app.use(bodyParser.json())
 app.use(middleware.requestLogger)
 
-app.use('/api/blog', notesRouter)
+app.use('/api/blog', blogRouter)
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
