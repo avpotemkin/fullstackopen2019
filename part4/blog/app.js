@@ -4,7 +4,6 @@ const bodyParser = require('body-parser')
 const app = express()
 const cors = require('cors')
 const blogRouter = require('./controllers/blog')
-const middleware = require('./utils/middleware')
 const mongoose = require('mongoose')
 
 console.log('connecting to', config.MONGODB_URI)
@@ -20,11 +19,7 @@ mongoose
 
 app.use(cors())
 app.use(bodyParser.json())
-app.use(middleware.requestLogger)
 
 app.use('/api/blog', blogRouter)
-
-app.use(middleware.unknownEndpoint)
-app.use(middleware.errorHandler)
 
 module.exports = app
