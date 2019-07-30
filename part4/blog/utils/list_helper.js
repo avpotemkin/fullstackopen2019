@@ -15,12 +15,15 @@ const favoriteBlog = blogs => {
     return Math.max(likes, blog.likes)
   }, 0)
 
-  const topBlog = blogs.find(b => b.likes === maxLikes)
-  delete topBlog._id
-  delete topBlog.__v
-  delete topBlog.url
-
-  return topBlog
+  if (blogs.length !== 0) {
+    const topBlog = blogs.find(b => b.likes === maxLikes)
+    delete topBlog._id
+    delete topBlog.__v
+    delete topBlog.url
+    return topBlog
+  } else {
+    return []
+  }
 }
 
 module.exports = {
