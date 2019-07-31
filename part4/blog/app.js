@@ -6,11 +6,12 @@ const cors = require('cors')
 const blogRouter = require('./controllers/blog')
 const mongoose = require('mongoose')
 const logger = require('./utils/logger')
+const middleware = require('./utils/middleware')
 
 logger.info('connecting to', config.MONGODB_URI)
 
 mongoose
-  .connect(config.MONGODB_URI, { useNewUrlParser: true })
+  .connect(config.MONGODB_URI, { useNewUrlParser: true,  useFindAndModify: false  })
   .then(() => {
     logger.info('connected to MongoDB')
   })
@@ -22,5 +23,9 @@ app.use(cors())
 app.use(bodyParser.json())
 
 app.use('/api/blog', blogRouter)
+
+app.use(middleware.errorHandler)
+app.use(middleware.unknownEndpoint)
+app.use(middleware.requestLogger)
 
 module.exports = app
