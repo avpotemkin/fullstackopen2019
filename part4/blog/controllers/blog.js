@@ -22,15 +22,14 @@ blogRouter.post("/", async (request, response, next) => {
   const token = getTokenFrom(request)
 
   try {
-    // const decodedToken = jwt.verify(token, process.env.SECRET)
-    // if (!token || !decodedToken.id) {
-    //   return response.status(401).json({ error: "token missing or invalid" })
-    // }
-    // const user = await User.findById(body.userId)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+    if (!token || !decodedToken.id) {
+      return response.status(401).json({ error: "token missing or invalid" })
+    }
 
-    const user = await User.findById("5d429f0a1e3d793c84b0bf6d")
+    const user = await User.findById(decodedToken.id)
 
-    const blog = new Blog({ ...body, user: user._id }).populate('user')
+    const blog = new Blog({ ...body, user: user._id })
 
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog._id)
