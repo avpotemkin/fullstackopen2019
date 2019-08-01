@@ -1,7 +1,6 @@
 const bcrypt = require("bcrypt")
 const usersRouter = require("express").Router()
 const User = require("../models/user")
-const logger = require('../utils/logger')
 
 usersRouter.get("/", async (request, response) => {
   const users = await User.find({}).populate("blogs", {
@@ -15,8 +14,17 @@ usersRouter.get("/", async (request, response) => {
 usersRouter.post("/", async (request, response, next) => {
   try {
     const body = request.body
+    const error = new Error()
 
-    if (body.password && body.password.length >= 3) {
+    if (!body.password) {
+      error.message = "Password is missing"
+      error.name = "ValidationError"
+      next(error)
+    } else if (body.password.length <= 3) {
+      error.message = "Password is too short"
+      error.name = "ValidationError"
+      next(error)
+    } else {
       const saltRounds = 10
       const passwordHash = await bcrypt.hash(body.password, saltRounds)
 
@@ -29,8 +37,6 @@ usersRouter.post("/", async (request, response, next) => {
       const savedUser = await user.save()
 
       response.json(savedUser)
-    } else {
-      response.status(400).send('Password is too short').end()
     }
   } catch (exception) {
     next(exception)
