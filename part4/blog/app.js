@@ -24,6 +24,9 @@ mongoose
     logger.error("error connecting to MongoDB:", error.message)
   })
 
+mongoose.set('useCreateIndex', true)
+mongoose.set('useFindAndModify', false)
+
 app.use(cors())
 app.use(bodyParser.json())
 app.use(middleware.requestLogger)

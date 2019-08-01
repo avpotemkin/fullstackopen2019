@@ -4,7 +4,6 @@ const User = require("../models/user")
 const jwt = require("jsonwebtoken")
 const _ = require("lodash")
 
-
 blogRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 })
   response.json(blogs.map(b => b.toJSON()))
@@ -28,7 +27,6 @@ blogRouter.post("/", async (request, response, next) => {
     user.blogs = user.blogs.concat(savedBlog._id)
     await user.save()
     response.json(savedBlog.toJSON())
-
   } catch (exception) {
     next(exception)
   }
@@ -36,11 +34,28 @@ blogRouter.post("/", async (request, response, next) => {
 
 blogRouter.delete("/:id", async (request, response, next) => {
   try {
-    await Blog.findByIdAndDelete(request.params.id)
-    response
-      .send(`Blog ${request.params.id} was deleted`)
-      .status(204)
-      .end()
+    const token = request.token
+
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+    if (!token || !decodedToken.id) {
+      return response.status(401).json({ error: "token missing or invalid" })
+    }
+
+    const blogToBeDeleted = await Blog.findById(request.params.id)
+    const requestingUser = await User.findById(decodedToken.id)
+    const creatorUser = await blogToBeDeleted.user
+
+    if (requestingUser._id.toString() !== creatorUser.toString()) {
+      const error = new Error()
+      error.name = "JsonWebTokenError"
+      next(error)
+    } else {
+      await Blog.findByIdAndDelete(request.params.id)
+      response
+        .send(`Blog ${request.params.id} was deleted`)
+        .status(204)
+        .end()
+    }
   } catch (exception) {
     next(exception)
   }
