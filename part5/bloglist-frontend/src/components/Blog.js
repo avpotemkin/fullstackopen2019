@@ -4,7 +4,7 @@ const Blog = ({ blog, user }) => {
     return null
   } else {
     return (
-      <li>{blog.title} {blog.author}</li>
+      <li>"{blog.title}", {blog.author}</li>
     )
   }
 }

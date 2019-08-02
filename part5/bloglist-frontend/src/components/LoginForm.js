@@ -1,4 +1,4 @@
-import React from "react"
+import React from 'react'
 
 const LoginForm = props => {
   return (
@@ -7,22 +7,22 @@ const LoginForm = props => {
         <h2>Login</h2>
         username
         <input
-          type="text"
+          type='text'
           value={props.username}
-          name="Username"
+          name='Username'
           onChange={({ target }) => props.setUsername(target.value)}
         />
       </div>
       <div>
         password
         <input
-          type="password"
+          type='password'
           value={props.password}
-          name="Password"
+          name='Password'
           onChange={({ target }) => props.setPassword(target.value)}
         />
       </div>
-      <button type="submit">login</button>
+      <button type='submit'>login</button>
     </form>
   )
 }

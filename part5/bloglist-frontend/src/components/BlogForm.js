@@ -1,5 +1,5 @@
-import React from "react"
-const BlogForm = (props) => {
+import React from 'react'
+const BlogForm = props => {
   if (props.user === null) {
     return null
   } else {
@@ -20,13 +20,10 @@ const BlogForm = (props) => {
           </div>
           <div>
             utl:
-            <input
-              value={props.newUrl}
-              onChange={props.handleUrlChange}
-            />
+            <input value={props.newUrl} onChange={props.handleUrlChange} />
           </div>
           <div>
-            <button type="submit">add</button>
+            <button type='submit'>add</button>
           </div>
         </form>
       </div>

@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from "react"
-import "./index.css"
-import Blog from "./components/Blog"
-import blogsService from "./services/blogs"
-import loginService from "./services/login"
-import LoginForm from "./components/LoginForm"
-import Notification from "./components/Notification"
-import BlogForm from "./components/BlogForm"
+import React, { useState, useEffect } from 'react'
+import './index.css'
+import Blog from './components/Blog'
+import blogsService from './services/blogs'
+import loginService from './services/login'
+import LoginForm from './components/LoginForm'
+import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [notification, setNotification] = useState(null)
-  const [newTitle, setNewTitle] = useState("")
-  const [newAuthor, setNewAuthor] = useState("")
-  const [newUrl, setNewUrl] = useState("")
+  const [newTitle, setNewTitle] = useState('')
+  const [newAuthor, setNewAuthor] = useState('')
+  const [newUrl, setNewUrl] = useState('')
   const [user, setUser] = useState(null)
 
   const handleLogin = async event => {
@@ -25,16 +25,16 @@ const App = () => {
         password
       })
 
-      window.localStorage.setItem("loggedUser", JSON.stringify(user))
+      window.localStorage.setItem('loggedUser', JSON.stringify(user))
 
       blogsService.setToken(user.token)
       setUser(user)
-      setUsername("")
-      setPassword("")
+      setUsername('')
+      setPassword('')
     } catch (exception) {
       setNotification({
-        type: "error",
-        text: "Wrong credentials"
+        type: 'error',
+        text: 'Wrong credentials'
       })
       setTimeout(() => {
         setNotification(null)
@@ -49,7 +49,7 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedUser")
+    const loggedUserJSON = window.localStorage.getItem('loggedUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -59,6 +59,7 @@ const App = () => {
 
   const logOutHandle = () => {
     window.localStorage.clear()
+    setUser(null)
   }
 
   const rows = () => (
@@ -84,18 +85,38 @@ const App = () => {
   const addBlog = async event => {
     event.preventDefault()
 
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
+    try {
+      const blogObject = {
+        title: newTitle,
+        author: newAuthor,
+        url: newUrl
+      }
+
+      const updatedBlog = await blogsService.create(blogObject)
+
+      setBlogs(blogs.concat(updatedBlog))
+      setNewTitle('')
+      setNewAuthor('')
+      setNewUrl('')
+
+      setNotification({
+        type: 'notification',
+        text: `Added the blog ${newTitle} by ${newAuthor}`
+      })
+
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+
+    } catch (exception) {
+      setNotification({
+        type: 'error',
+        text: `Failed to add the blog: ${exception}`
+      })
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
     }
-
-    const updatedBlog = await blogsService.create(blogObject)
-
-    setBlogs(blogs.concat(updatedBlog))
-    setNewTitle("")
-    setNewAuthor("")
-    setNewUrl("")
   }
 
   return (
@@ -115,7 +136,7 @@ const App = () => {
         />
       ) : (
         <p>
-          You are looged in as {user.username}{" "}
+          You are looged in as {user.username}{' '}
           <button onClick={() => logOutHandle()}>log out</button>
         </p>
       )}
@@ -126,7 +147,7 @@ const App = () => {
         handleTitleChange={handleTitleChange}
         handleAuthorChange={handleAuthorChange}
         handleUrlChange={handleUrlChange}
-         />
+      />
     </div>
   )
 }
