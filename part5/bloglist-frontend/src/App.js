@@ -5,6 +5,7 @@ import blogsService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 
 const App = () => {
@@ -16,6 +17,7 @@ const App = () => {
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
   const [user, setUser] = useState(null)
+  const [loginVisible, setLoginVisible] = useState(false)
 
   const handleLogin = async event => {
     event.preventDefault()
@@ -107,7 +109,6 @@ const App = () => {
       setTimeout(() => {
         setNotification(null)
       }, 5000)
-
     } catch (exception) {
       setNotification({
         type: 'error',
@@ -119,6 +120,30 @@ const App = () => {
     }
   }
 
+  const loginForm = () => {
+    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+    const showWhenVisible = { display: loginVisible ? '' : 'none' }
+
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}>log in</button>
+        </div>
+        <div style={showWhenVisible}>
+          <LoginForm
+            user={user}
+            handleLogin={handleLogin}
+            username={username}
+            setUsername={setUsername}
+            password={password}
+            setPassword={setPassword}
+          />
+          <button onClick={() => setLoginVisible(false)}>cancel</button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div>
       <h1>Blogs</h1>
@@ -126,28 +151,23 @@ const App = () => {
       <Notification notification={notification} />
 
       {user === null ? (
-        <LoginForm
-          user={user}
-          handleLogin={handleLogin}
-          username={username}
-          setUsername={setUsername}
-          password={password}
-          setPassword={setPassword}
-        />
+        loginForm()
       ) : (
-        <p>
+        <div>
           You are looged in as {user.username}{' '}
           <button onClick={() => logOutHandle()}>log out</button>
-        </p>
+          {rows()}
+          <Togglable buttonLabel='new blog'>
+            <BlogForm
+              user={user}
+              addBlog={addBlog}
+              handleTitleChange={handleTitleChange}
+              handleAuthorChange={handleAuthorChange}
+              handleUrlChange={handleUrlChange}
+            />
+          </Togglable>
+        </div>
       )}
-      {rows()}
-      <BlogForm
-        user={user}
-        addBlog={addBlog}
-        handleTitleChange={handleTitleChange}
-        handleAuthorChange={handleAuthorChange}
-        handleUrlChange={handleUrlChange}
-      />
     </div>
   )
 }
