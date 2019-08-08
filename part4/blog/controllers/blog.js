@@ -68,12 +68,13 @@ blogRouter.put("/:id", async (request, response, next) => {
       request.body,
       { new: true },
       (error, result) => {
+        console.log(result)
         response
           .json(result.toJSON())
           .status(200)
           .end()
       }
-    )
+    ).populate("user", { username: 1, name: 1 })
   } catch (exception) {
     next(exception)
   }

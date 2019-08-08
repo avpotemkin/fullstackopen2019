@@ -67,16 +67,17 @@ const App = () => {
   const rows = () => {
     blogs.sort((a, b) => b.likes - a.likes)
     return (
-      <ul>
+      <div>
         {blogs.map(blog => (
           <Blog
             user={user}
             key={blog.id}
             blog={blog}
             handleLikeButton={handleLikeButton}
+            handleDeleteButton={handleDeleteButton}
           />
         ))}
-      </ul>
+      </div>
     )
   }
 
@@ -92,6 +93,33 @@ const App = () => {
     setNewUrl(event.target.value)
   }
 
+  const handleDeleteButton = async blog => {
+    try {
+      const message = `Do you want to delete ${blog.title}?`
+      const result = window.confirm(message)
+      if (result === true) {
+        await blogsService.deleteBlog(String(blog.id))
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+        setNotification({
+          type: 'notification',
+          text: `Deleted the blog ${blog.title} by ${blog.author}`
+        })
+
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
+      }
+    } catch (exception) {
+      setNotification({
+        type: 'error',
+        text: `Failed to delete the blog: ${exception}`
+      })
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+    }
+  }
+
   const handleLikeButton = async blog => {
     try {
       const blogObject = {
@@ -105,8 +133,7 @@ const App = () => {
 
       const updatedBlog = await blogsService.update(String(blog.id), blogObject)
 
-      setBlogs(blogs.map(b => b.id === blog.id ? updatedBlog : b ))
-
+      setBlogs(blogs.map(b => (b.id === blog.id ? updatedBlog : b)))
     } catch (exception) {
       setNotification({
         type: 'error',
