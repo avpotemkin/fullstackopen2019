@@ -1,5 +1,11 @@
 {
   "name": "bloglist-frontend",
+  "jest": {
+    "verbose": true,
+    "setupFiles": [
+      "./setupTests.js"
+    ]
+  },
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -34,6 +40,9 @@
   },
   "proxy": "http://localhost:3003",
   "devDependencies": {
-    "eslint-plugin-jest": "^22.15.0"
+    "@testing-library/jest-dom": "^4.0.0",
+    "@testing-library/react": "^8.0.8",
+    "eslint-plugin-jest": "^22.15.0",
+    "jest-dom": "^4.0.0"
   }
 }
