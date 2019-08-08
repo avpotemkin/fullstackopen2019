@@ -19,18 +19,19 @@ const Blog = ({ blog, user, handleLikeButton, handleDeleteButton }) => {
       <div style={blogStyle}>
         <div style={showWhenVisible}>
           <div onClick={() => setVisible(!visible)}>
-              "{blog.title}", {blog.author}
+            {blog.title}, {blog.author}
           </div>
         </div>
         <div style={hideWhenVisible}>
-            "{blog.title}", {blog.author} <br />
-            <a href={blog.url}>{blog.url}</a>
-            <br />
-            {blog.likes} likes{' '} <br />
-            added by {blog.user.username} <br />
-            <button onClick={() => handleLikeButton(blog)}>like</button> <br />
-            { blog.user.username === user.username &&
-              <button onClick={() => handleDeleteButton(blog)}>delete</button> }
+          {blog.title}, {blog.author} <br />
+          <a href={blog.url}>{blog.url}</a>
+          <br />
+          {blog.likes} likes <br />
+          added by {blog.user.username} <br />
+          <button onClick={() => handleLikeButton(blog)}>like</button> <br />
+          {blog.user.username === user.username && (
+            <button onClick={() => handleDeleteButton(blog)}>delete</button>
+          )}
         </div>
       </div>
     )
