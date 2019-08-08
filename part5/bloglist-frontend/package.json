@@ -1,11 +1,5 @@
 {
   "name": "bloglist-frontend",
-  "jest": {
-    "verbose": true,
-    "setupFiles": [
-      "./setupTests.js"
-    ]
-  },
   "version": "0.1.0",
   "private": true,
   "dependencies": {
