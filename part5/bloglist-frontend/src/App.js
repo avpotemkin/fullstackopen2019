@@ -64,13 +64,21 @@ const App = () => {
     setUser(null)
   }
 
-  const rows = () => (
-    <ul>
-      {blogs.map(blog => (
-        <Blog user={user} key={blog.id} blog={blog} />
-      ))}
-    </ul>
-  )
+  const rows = () => {
+    blogs.sort((a, b) => b.likes - a.likes)
+    return (
+      <ul>
+        {blogs.map(blog => (
+          <Blog
+            user={user}
+            key={blog.id}
+            blog={blog}
+            handleLikeButton={handleLikeButton}
+          />
+        ))}
+      </ul>
+    )
+  }
 
   const handleTitleChange = event => {
     setNewTitle(event.target.value)
@@ -84,9 +92,35 @@ const App = () => {
     setNewUrl(event.target.value)
   }
 
+  const handleLikeButton = async blog => {
+    try {
+      const blogObject = {
+        user: blog.user.id,
+        likes: blog.likes + 1,
+        author: blog.author,
+        title: blog.title,
+        url: blog.url,
+        id: blog.id
+      }
+
+      const updatedBlog = await blogsService.update(String(blog.id), blogObject)
+
+      setBlogs(blogs.map(b => b.id === blog.id ? updatedBlog : b ))
+
+    } catch (exception) {
+      setNotification({
+        type: 'error',
+        text: `Failed to like the blog: ${exception}`
+      })
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
+    }
+  }
+
   const addBlog = async event => {
     event.preventDefault()
-
+    blogFormRef.current.toggleVisibility()
     try {
       const blogObject = {
         title: newTitle,
@@ -144,6 +178,20 @@ const App = () => {
     )
   }
 
+  const blogFormRef = React.createRef()
+
+  const blogForm = () => (
+    <Togglable buttonLabel='new blog' ref={blogFormRef}>
+      <BlogForm
+        user={user}
+        addBlog={addBlog}
+        handleTitleChange={handleTitleChange}
+        handleAuthorChange={handleAuthorChange}
+        handleUrlChange={handleUrlChange}
+      />
+    </Togglable>
+  )
+
   return (
     <div>
       <h1>Blogs</h1>
@@ -154,18 +202,10 @@ const App = () => {
         loginForm()
       ) : (
         <div>
-          You are looged in as {user.username}{' '}
+          You are loged in as {user.username}{' '}
           <button onClick={() => logOutHandle()}>log out</button>
           {rows()}
-          <Togglable buttonLabel='new blog'>
-            <BlogForm
-              user={user}
-              addBlog={addBlog}
-              handleTitleChange={handleTitleChange}
-              handleAuthorChange={handleAuthorChange}
-              handleUrlChange={handleUrlChange}
-            />
-          </Togglable>
+          {blogForm()}
         </div>
       )}
     </div>

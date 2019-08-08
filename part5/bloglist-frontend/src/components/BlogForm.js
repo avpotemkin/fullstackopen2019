@@ -19,7 +19,7 @@ const BlogForm = props => {
             />
           </div>
           <div>
-            utl:
+            URL:
             <input value={props.newUrl} onChange={props.handleUrlChange} />
           </div>
           <div>
