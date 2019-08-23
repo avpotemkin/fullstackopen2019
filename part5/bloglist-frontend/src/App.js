@@ -7,6 +7,7 @@ import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
+import SimpleBlog from './components/SimpleBlog'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -69,12 +70,16 @@ const App = () => {
     return (
       <div>
         {blogs.map(blog => (
-          <Blog
-            user={user}
+          // <Blog
+          //   user={user}
+          //   key={blog.id}
+          //   blog={blog}
+          //   handleLikeButton={handleLikeButton}
+          //   handleDeleteButton={handleDeleteButton}
+          // />
+          <SimpleBlog
             key={blog.id}
             blog={blog}
-            handleLikeButton={handleLikeButton}
-            handleDeleteButton={handleDeleteButton}
           />
         ))}
       </div>
