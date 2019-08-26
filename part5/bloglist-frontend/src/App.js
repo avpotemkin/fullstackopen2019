@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+
 import './index.css'
 import Blog from './components/Blog'
 import blogsService from './services/blogs'
@@ -7,33 +8,34 @@ import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
-import SimpleBlog from './components/SimpleBlog'
+import { useField } from './hooks'
+// import SimpleBlog from './components/SimpleBlog'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [notification, setNotification] = useState(null)
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
   const [user, setUser] = useState(null)
   const [loginVisible, setLoginVisible] = useState(false)
+  const username = useField('username')
+  const password = useField('password')
 
   const handleLogin = async event => {
     event.preventDefault()
+
     try {
       const user = await loginService.login({
-        username,
-        password
+        username: username.value,
+        password: password.value
       })
 
       window.localStorage.setItem('loggedUser', JSON.stringify(user))
 
       blogsService.setToken(user.token)
       setUser(user)
-      setUsername('')
-      setPassword('')
+
     } catch (exception) {
       setNotification({
         type: 'error',
@@ -70,17 +72,17 @@ const App = () => {
     return (
       <div>
         {blogs.map(blog => (
-          // <Blog
-          //   user={user}
-          //   key={blog.id}
-          //   blog={blog}
-          //   handleLikeButton={handleLikeButton}
-          //   handleDeleteButton={handleDeleteButton}
-          // />
-          <SimpleBlog
+          <Blog
+            user={user}
             key={blog.id}
             blog={blog}
+            handleLikeButton={handleLikeButton}
+            handleDeleteButton={handleDeleteButton}
           />
+          // <SimpleBlog
+          //   key={blog.id}
+          //   blog={blog}
+          // />
         ))}
       </div>
     )
@@ -189,7 +191,6 @@ const App = () => {
   const loginForm = () => {
     const hideWhenVisible = { display: loginVisible ? 'none' : '' }
     const showWhenVisible = { display: loginVisible ? '' : 'none' }
-
     return (
       <div>
         <div style={hideWhenVisible}>
@@ -200,9 +201,7 @@ const App = () => {
             user={user}
             handleLogin={handleLogin}
             username={username}
-            setUsername={setUsername}
             password={password}
-            setPassword={setPassword}
           />
           <button onClick={() => setLoginVisible(false)}>cancel</button>
         </div>
