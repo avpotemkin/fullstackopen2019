@@ -1,15 +1,11 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 
 const BlogForm = ({
   user,
   addBlog,
   newTitle,
-  handleTitleChange,
   newAuthor,
-  handleAuthorChange,
   newUrl,
-  handleUrlChange
 }) => {
   if (user === null) {
     return null
@@ -20,18 +16,15 @@ const BlogForm = ({
         <form onSubmit={addBlog}>
           <div>
             title:
-            <input value={newTitle} onChange={handleTitleChange} />
+            <input {...newTitle} />
           </div>
           <div>
             author:
-            <input
-              value={newAuthor}
-              onChange={handleAuthorChange}
-            />
+            <input {...newAuthor}/>
           </div>
           <div>
             URL:
-            <input value={newUrl} onChange={handleUrlChange} />
+            <input {...newUrl} />
           </div>
           <div>
             <button type='submit'>add</button>
@@ -40,14 +33,6 @@ const BlogForm = ({
       </div>
     )
   }
-}
-
-BlogForm.propTypes = {
-  handleTitleChange: PropTypes.func.isRequired,
-  handleAuthorChange: PropTypes.func.isRequired,
-  handleUrlChange: PropTypes.func.isRequired,
-  addBlog: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired
 }
 
 export default BlogForm

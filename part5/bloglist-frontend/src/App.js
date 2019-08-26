@@ -14,9 +14,15 @@ import { useField } from './hooks'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [notification, setNotification] = useState(null)
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
+
+  // const [newTitle, setNewTitle] = useState('')
+  // const [newAuthor, setNewAuthor] = useState('')
+  // const [newUrl, setNewUrl] = useState('')
+
+  const newTitle = useField('title')
+  const newAuthor = useField('author')
+  const newUrl = useField('url')
+
   const [user, setUser] = useState(null)
   const [loginVisible, setLoginVisible] = useState(false)
   const username = useField('username')
@@ -35,7 +41,6 @@ const App = () => {
 
       blogsService.setToken(user.token)
       setUser(user)
-
     } catch (exception) {
       setNotification({
         type: 'error',
@@ -45,6 +50,8 @@ const App = () => {
         setNotification(null)
       }, 5000)
     }
+    username.reset()
+    password.reset()
   }
 
   useEffect(() => {
@@ -86,18 +93,6 @@ const App = () => {
         ))}
       </div>
     )
-  }
-
-  const handleTitleChange = event => {
-    setNewTitle(event.target.value)
-  }
-
-  const handleAuthorChange = event => {
-    setNewAuthor(event.target.value)
-  }
-
-  const handleUrlChange = event => {
-    setNewUrl(event.target.value)
   }
 
   const handleDeleteButton = async blog => {
@@ -157,21 +152,21 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     try {
       const blogObject = {
-        title: newTitle,
-        author: newAuthor,
-        url: newUrl
+        title: newTitle.value,
+        author: newAuthor.value,
+        url: newUrl.value
       }
 
       const updatedBlog = await blogsService.create(blogObject)
 
       setBlogs(blogs.concat(updatedBlog))
-      setNewTitle('')
-      setNewAuthor('')
-      setNewUrl('')
+      newTitle.reset()
+      newAuthor.reset()
+      newUrl.reset()
 
       setNotification({
         type: 'notification',
-        text: `Added the blog ${newTitle} by ${newAuthor}`
+        text: `Added the blog ${newTitle.value} by ${newAuthor.value}`
       })
 
       setTimeout(() => {
@@ -216,9 +211,9 @@ const App = () => {
       <BlogForm
         user={user}
         addBlog={addBlog}
-        handleTitleChange={handleTitleChange}
-        handleAuthorChange={handleAuthorChange}
-        handleUrlChange={handleUrlChange}
+        newTitle={newTitle}
+        newAuthor={newAuthor}
+        newUrl={newUrl}
       />
     </Togglable>
   )
