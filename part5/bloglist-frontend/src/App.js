@@ -14,17 +14,11 @@ import { useField } from './hooks'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [notification, setNotification] = useState(null)
-
-  // const [newTitle, setNewTitle] = useState('')
-  // const [newAuthor, setNewAuthor] = useState('')
-  // const [newUrl, setNewUrl] = useState('')
-
+  const [user, setUser] = useState(null)
+  const [loginVisible, setLoginVisible] = useState(false)
   const newTitle = useField('title')
   const newAuthor = useField('author')
   const newUrl = useField('url')
-
-  const [user, setUser] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
   const username = useField('username')
   const password = useField('password')
 
