@@ -9,7 +9,7 @@ const anecdotesAtStart = [
 
 const getId = () => (100000 * Math.random()).toFixed(0)
 
-const asObject = (anecdote) => {
+const asObject = anecdote => {
   return {
     content: anecdote,
     id: getId(),
@@ -23,20 +23,22 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'NEW_ANECDOTE':
       return state.concat(action.data)
-    case 'VOTE':
+    case 'VOTE': {
       const id = action.id
       const anecdoteToChange = state.find(a => a.id === id)
       const changedAnecdote = {
         ...anecdoteToChange,
         votes: anecdoteToChange.votes + 1
       }
-      return state.map(a => a.id !== action.id ? a : changedAnecdote)
-    default:
+      return state.map(a => (a.id !== action.id ? a : changedAnecdote))
+    }
+    default: {
       return state
+    }
   }
 }
 
-export const createAnecdote = (content) => {
+export const createAnecdote = content => {
   return {
     type: 'NEW_ANECDOTE',
     data: {
