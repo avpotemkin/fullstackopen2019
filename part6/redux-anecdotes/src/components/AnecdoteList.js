@@ -17,19 +17,35 @@ const AnecdoteList = props => {
       props.store.dispatch(notificationChange(null))
     }, 5000)
   }
-
-  const listOfAnecdotes = props.store
+  const filteredAnectodes = props.store
     .getState()
-    .anecdotes.sort((a, b) => b.votes - a.votes)
-    .map(anecdote => (
-      <div key={anecdote.id}>
-        <div>{anecdote.content}</div>
-        <div>
-          has {anecdote.votes}
-          <button onClick={() => vote(anecdote.id)}>vote</button>
-        </div>
-      </div>
-    ))
+    .anecdotes.filter(a => a.content.toLowerCase().includes(props.store.getState().filter.toLowerCase()))
+
+  const listOfAnecdotes =
+    props.store.getState().filter === ''
+      ? props.store
+          .getState()
+          .anecdotes.sort((a, b) => b.votes - a.votes)
+          .map(anecdote => (
+            <div key={anecdote.id}>
+              <div>{anecdote.content}</div>
+              <div>
+                has {anecdote.votes}
+                <button onClick={() => vote(anecdote.id)}>vote</button>
+              </div>
+            </div>
+          ))
+      : filteredAnectodes
+          .sort((a, b) => b.votes - a.votes)
+          .map(anecdote => (
+            <div key={anecdote.id}>
+              <div>{anecdote.content}</div>
+              <div>
+                has {anecdote.votes}
+                <button onClick={() => vote(anecdote.id)}>vote</button>
+              </div>
+            </div>
+          ))
 
   return listOfAnecdotes
 }
