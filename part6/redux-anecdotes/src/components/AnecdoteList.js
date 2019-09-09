@@ -1,4 +1,5 @@
 import React from 'react'
+import { notificationChange } from '../reducers/notificationReducer'
 
 const AnecdoteList = props => {
   const vote = id => {
@@ -6,11 +7,20 @@ const AnecdoteList = props => {
       type: 'VOTE',
       id: id
     })
+    const votedAnecdote = props.store
+      .getState()
+      .anecdotes.find(a => a.id === id)
+    props.store.dispatch(
+      notificationChange(`You voted for '${votedAnecdote.content}'`)
+    )
+    setTimeout(() => {
+      props.store.dispatch(notificationChange(null))
+    }, 5000)
   }
 
   const listOfAnecdotes = props.store
     .getState()
-    .sort((a, b) => b.votes - a.votes)
+    .anecdotes.sort((a, b) => b.votes - a.votes)
     .map(anecdote => (
       <div key={anecdote.id}>
         <div>{anecdote.content}</div>
