@@ -1,13 +1,11 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { notificationChange } from '../reducers/notificationReducer'
+import { vote } from '../reducers/anecdoteReducer'
 
 const AnecdoteList = props => {
-  const vote = id => {
-    props.store.dispatch({
-      type: 'VOTE',
-      id: id
-    })
+  const voteFunction = id => {
+    props.vote(id)
     const votedAnecdote = props.anecdotes.find(a => a.id === id)
     props.notificationChange(`You voted for '${votedAnecdote.content}'`)
     setTimeout(() => {
@@ -27,7 +25,7 @@ const AnecdoteList = props => {
               <div>{anecdote.content}</div>
               <div>
                 has {anecdote.votes}
-                <button onClick={() => vote(anecdote.id)}>vote</button>
+                <button onClick={() => voteFunction(anecdote.id)}>vote</button>
               </div>
             </div>
           ))
@@ -38,7 +36,7 @@ const AnecdoteList = props => {
               <div>{anecdote.content}</div>
               <div>
                 has {anecdote.votes}
-                <button onClick={() => vote(anecdote.id)}>vote</button>
+                <button onClick={() => voteFunction(anecdote.id)}>vote</button>
               </div>
             </div>
           ))
@@ -54,7 +52,8 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = {
-  notificationChange
+  notificationChange,
+  vote
 }
 
 const ConnectedAnecdoteList = connect(
